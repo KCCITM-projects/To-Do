@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List App</title>
+<style>
+body {
+  background-color: #ffeaa7;
+  min-height: 70vh;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: block;
+  justify-content: center;
+  align-items: center;
+  color: hsl(198, 1%, 29%);
+  font-family: "Merriweather",cursive;
+  text-align: center;
+  font-size: 130%;
+}
+
+.navbar {
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px 0;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.nav-link:hover {
+  background-color: #007bff;
+  transform: scale(1.05);
+}
+
+
+.container {
+  width: 100%;
+  height: auto;
+  min-height: 500px;
+  max-width: 700px;
+  min-width: 550px;
+  background: #f1f5f8;
+  background-image: radial-gradient(#bfc0c1 7.2%, transparent 0);
+  background-size: 25px 25px;
+  border-radius: 20px;
+  display: inline-grid;
+  box-shadow: 4px 3px 7px 2px #00000040;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.heading h1 {
+  transform: rotate(2deg);
+  padding: 0.2rem 1.2rem;
+  border-radius: 20% 5% 20% 5%/5% 20% 25% 20%;
+  background-color: #ffeaa7;
+  font-size: 1rem;
+}
+
+h1{
+  transform: rotate(2deg);
+  padding: 0.2rem 1.2rem;
+  border-radius: 20% 5% 20% 5%/5% 20% 25% 20%;
+  font-size: 3rem;
+  background-color: #fdcb6e;
+}
+
+.form input {
+  box-sizing: border-box;
+  background-color: transparent;
+  padding: 0.7rem;
+  border-bottom-right-radius: 15px 3px;
+  border-bottom-left-radius: 3px 15px;
+  border: solid 3px transparent;
+  border-bottom: dashed 3px #fdcb6e;
+  font-family: "Merriweather",cursive;
+  /*font-family: "Montserrat", sans-serif;*/
+  font-size: 1.011rem;
+   font-weight: bold;
+  color: hsla(260, 2%, 25%, 0.7);
+  width: 70%;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  font-family: "Merriweather",cursive;
+  /*font-family: "Montserrat", sans-serif;*/
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-radius: 5px;
+  background-color:  #ffeaa7;
+}
+
+button span {
+  background: #f1f5f8;
+  display: block;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: 2px solid hsl(198, 1%, 29%);
+}
+
+li {
+  text-align: left;
+  position: relative;
+  padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 100%; /* Adjust the font size for smaller screens */
+  }
+
+  .container {
+    max-width: 90%; /* Adjust the maximum width for smaller screens */
+    min-width: auto;
+  }
+
+  h1 {
+    font-size: 2.5rem; /* Reduce the font size for smaller screens */
+  }
+
+  .form input {
+    width: 100%; /* Make the input field width 100% for smaller screens */
+  }
+
+  .navbar {
+    padding: 5px 0; /* Reduce the padding for smaller screens */
+  }
+}
+
+/* Additional responsive styles for even smaller screens if needed */
+@media (max-width: 480px) {
+  body {
+    padding: 0.5rem; /* Reduce the body padding for smaller screens */
+  }
+
+  .navbar {
+    text-align: center;
+  }
+
+  .nav-link {
+    padding: 8px 15px;
+  }
+
+  .heading h1 {
+    padding: 0.2rem 1rem;
+  }
+
+  .form input {
+    padding: 0.5rem;
+  }
+}
+
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="#" class="nav-link">Home</a>
+  <a href="#" class="nav-link">About</a>
+  <a href="#" class="nav-link">Contact</a>
+  <a href="#" class="nav-link">Social Media</a>
+</nav>
+<div class="container">
+  <h1 class="heading">To-Do List</h1>
+  <div class="form">
+    <input type="text" id="newTask" class="task-input" placeholder="Enter a new task">
+    <button id="addTaskBtn" class="add-button">Add Task</button>
+  </div>
+  <ul id="taskList" class="task-list"></ul>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const newTaskInput = document.getElementById("newTask");
+  const addTaskBtn = document.getElementById("addTaskBtn");
+  const taskList = document.getElementById("taskList");
+
+  function createTaskElement(taskText) {
+    const li = document.createElement("li");
+    li.classList.add("task-item");
+    li.innerHTML = `
+      <span class="task-text">${taskText}</span>
+      <div class="task-actions">
+        <button class="editBtn">Edit</button>
+        <button class="completeBtn">Complete</button>
+      </div>
+    `;
+
+    const editBtn = li.querySelector(".editBtn");
+    const completeBtn = li.querySelector(".completeBtn");
+    const taskTextElement = li.querySelector(".task-text");
+
+    editBtn.addEventListener("click", function () {
+      editTask(taskTextElement);
+    });
+
+    completeBtn.addEventListener("click", function () {
+      completeTask(li);
+    });
+
+    li.addEventListener("click", function () {
+      deleteTask(li);
+    });
+
+    return li;
+  }
+    function deleteTask(taskElement) {
+    taskElement.remove();
+  }
+  
+    function addTask() {
+      const taskText = newTaskInput.value.trim();
+  
+      if (taskText !== "") {
+        const li = createTaskElement(taskText);
+        taskList.appendChild(li);
+        newTaskInput.value = "";
+      }
+    }
+  
+    function editTask(taskTextElement) {
+      const newTaskText = prompt("Edit the task:", taskTextElement.textContent);
+      if (newTaskText !== null) {
+        taskTextElement.textContent = newTaskText;
+      }
+    }
+  
+    function completeTask(taskElement) {
+      taskElement.classList.toggle("completed");
+      const completeBtn = taskElement.querySelector(".completeBtn");
+      const editBtn = taskElement.querySelector(".editBtn");
+      if (completeBtn.style.display !== "none") {
+        completeBtn.style.display = "none"; // Hide the Complete button
+        editBtn.style.display = "inline-block"; // Show the Edit button
+      } else {
+        completeBtn.style.display = "inline-block"; // Show the Complete button
+        editBtn.style.display = "none"; // Hide the Edit button
+      }
+    }
+  
+    newTaskInput.addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+        addTask();
+      }
+    });
+  
+    addTaskBtn.addEventListener("click", addTask);
+  
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        const linkText = link.textContent.toLowerCase();
+        if (linkText === 'about') {
+          alert('About - Created by: Ankush, Moksh, Nivedita, Lakshay, Priyanka');
+        } else if (linkText === 'social media') {
+          showSocialMediaOptions();
+        } else {
+          alert(`You clicked on ${linkText}`);
+        }
+      });
+    });
+  
+    function showSocialMediaOptions() {
+      const socialMediaOptions = [
+        { name: 'Ankush', url: 'https://www.instagram.com/mrrobot_h4ck3r' },
+        { name: 'Moksh', url: 'https://www.instagram.com/demolitionboy_' },
+        { name: 'Nivedita', url: 'https://www.instagram.com/nivedita_username' },
+        { name: 'Lakshay', url: 'https://www.instagram.com/itzzz_lakshayyy' },
+        { name: 'Priyanka', url: 'https://www.instagram.com/pinki_cute_baby' }
+      ];
+  
+      const selectedOption = prompt(
+        "Choose a team member:",
+        socialMediaOptions.map(option => option.name).join(", ")
+      );
+  
+      const selectedMember = socialMediaOptions.find(option => option.name === selectedOption);
+  
+      if (selectedMember) {
+        alert(`You selected: ${selectedMember.name}`);
+        window.location.href = selectedMember.url;
+      } else {
+        alert('User not found');
+      }
+    }
+});
+</script>
+</body>
+</html>
